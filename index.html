@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y3 SPELLING JUL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=KaiTi&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Sans+MS&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --blue-theme: #E3F2FD;
+  --pink-theme: #FCE4EC;
+  --purple-theme: #F3E5F5;
+  --green-theme: #E8F5E9;
+}
+body {
+  font-family: 'KaiTi', serif;
+  background-color: #f7fafc;
+  padding-bottom: 80px;
+}
+.flashcard-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .flashcard-container {
+    grid-template-columns: 1fr;
+  }
+}
+.card-group {
+  padding: 20px;
+  border-radius: 12px;
+  display: none;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.group-1 { background-color: var(--blue-theme); }
+.group-2 { background-color: var(--pink-theme); }
+.group-3 { background-color: var(--purple-theme); }
+.group-4 { background-color: var(--green-theme); }
+.card {
+  width: 100%;
+  height: 200px;
+  margin: 15px auto;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: white;
+}
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-radius: 8px;
+  background: white;
+  font-size: 24px;
+  word-wrap: break-word;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.card-front {
+  font-family: 'KaiTi', serif;
+}
+.card-back {
+  transform: rotateY(180deg);
+  font-family: 'Comic Sans MS', cursive;
+}
+.pronounce-icon {
+  font-size: 20px;
+  margin-top: 10px;
+  color: #4F46E5;
+}
+.group-title {
+  font-weight: bold;
+  padding: 10px 0;
+  margin-bottom: 15px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  font-size: 28px;
+  font-family: 'KaiTi', serif;
+  text-align: center;
+}
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 0 15px;
+}
+.button-container button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  color: black;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Comic Sans MS', cursive;
+  transition: background-color 0.3s ease;
+}
+.button-container button.group-1-btn {
+  background-color: var(--blue-theme);
+}
+.button-container button.group-2-btn {
+  background-color: var(--pink-theme);
+}
+.button-container button.group-3-btn {
+  background-color: var(--purple-theme);
+}
+.button-container button.group-4-btn {
+  background-color: var(--green-theme);
+}
+.button-container button:hover {
+  opacity: 0.8;
+}
+.instruction {
+  text-align: center;
+  margin: 15px 0;
+  color: #666;
+  font-size: 18px;
+  font-family: 'KaiTi', serif;
+}
+.pronounce-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #4F46E5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+</style>
+</head>
+<body class="min-h-screen bg-gray-50">
+<header class="bg-white shadow-sm py-4">
+  <div class="max-w-7xl mx-auto px-4">
+    <h1 class="text-3xl font-bold text-gray-900">Y3 SPELLING JUL</h1>
+    <p class="instruction">点击卡片翻转，点击喇叭图标发音</p>
+  </div>
+</header>
+<div class="button-container">
+  <button class="group-1-btn" onclick="toggleGroup('group-1')">8-14/7</button>
+  <button class="group-2-btn" onclick="toggleGroup('group-2')">15-21/7</button>
+  <button class="group-3-btn" onclick="toggleGroup('group-3')">22-28/7</button>
+  <button class="group-4-btn" onclick="toggleGroup('group-4')">1-7/8</button>
+</div>
+<div class="flashcard-container">
+  <!-- 8-14/7 -->
+  <section id="group-1" class="card-group group-1">
+    <h2 class="group-title">8-14/7</h2>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="我的" data-english="Mine">
+      <div class="card-inner">
+        <div class="card-front">我的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '我的', 'Mine')"></i></div>
+        <div class="card-back">Mine <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '我的', 'Mine')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="你的" data-english="Yours">
+      <div class="card-inner">
+        <div class="card-front">你的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '你的', 'Yours')"></i></div>
+        <div class="card-back">Yours <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '你的', 'Yours')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="他的" data-english="His">
+      <div class="card-inner">
+        <div class="card-front">他的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '他的', 'His')"></i></div>
+        <div class="card-back">His <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '他的', 'His')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="小猫" data-english="Kitten">
+      <div class="card-inner">
+        <div class="card-front">小猫 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小猫', 'Kitten')"></i></div>
+        <div class="card-back">Kitten <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小猫', 'Kitten')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="她的" data-english="Hers">
+      <div class="card-inner">
+        <div class="card-front">她的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '她的', 'Hers')"></i></div>
+        <div class="card-back">Hers <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '她的', 'Hers')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="邻居" data-english="Neighbour">
+      <div class="card-inner">
+        <div class="card-front">邻居 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '邻居', 'Neighbour')"></i></div>
+        <div class="card-back">Neighbour <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '邻居', 'Neighbour')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="我的哥哥的" data-english="My brother's">
+      <div class="card-inner">
+        <div class="card-front">我的哥哥的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '我的哥哥的', 'My brother's')"></i></div>
+        <div class="card-back">My brother's <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '我的哥哥的', 'My brother's')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="木偶" data-english="Puppets">
+      <div class="card-inner">
+        <div class="card-front">木偶 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '木偶', 'Puppets')"></i></div>
+        <div class="card-back">Puppets <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '木偶', 'Puppets')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="收集金币" data-english="Collected coins">
+      <div class="card-inner">
+        <div class="card-front">收集金币 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '收集金币', 'Collected coins')"></i></div>
+        <div class="card-back">Collected coins <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '收集金币', 'Collected coins')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="手链" data-english="Bracelet">
+      <div class="card-inner">
+        <div class="card-front">手链 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '手链', 'Bracelet')"></i></div>
+        <div class="card-back">Bracelet <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '手链', 'Bracelet')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="属于我" data-english="Belong to me">
+      <div class="card-inner">
+        <div class="card-front">属于我 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '属于我', 'Belong to me')"></i></div>
+        <div class="card-back">Belong to me <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '属于我', 'Belong to me')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="窗帘" data-english="Curtain">
+      <div class="card-inner">
+        <div class="card-front">窗帘 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '窗帘', 'Curtain')"></i></div>
+        <div class="card-back">Curtain <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '窗帘', 'Curtain')"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15-21/7 -->
+  <section id="group-2" class="card-group group-2">
+    <h2 class="group-title">15-21/7</h2>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="小孩" data-english="Child">
+      <div class="card-inner">
+        <div class="card-front">小孩 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小孩', 'Child')"></i></div>
+        <div class="card-back">Child <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小孩', 'Child')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="设备" data-english="Apparatus">
+      <div class="card-inner">
+        <div class="card-front">设备 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '设备', 'Apparatus')"></i></div>
+        <div class="card-back">Apparatus <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '设备', 'Apparatus')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="小孩们" data-english="Children">
+      <div class="card-inner">
+        <div class="card-front">小孩们 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小孩们', 'Children')"></i></div>
+        <div class="card-back">Children <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '小孩们', 'Children')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="顶层公寓" data-english="Penthouse">
+      <div class="card-inner">
+        <div class="card-front">顶层公寓 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '顶层公寓', 'Penthouse')"></i></div>
+        <div class="card-back">Penthouse <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '顶层公寓', 'Penthouse')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="谁的" data-english="Whose">
+      <div class="card-inner">
+        <div class="card-front">谁的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '谁的', 'Whose')"></i></div>
+        <div class="card-back">Whose <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '谁的', 'Whose')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="公寓" data-english="Apartment">
+      <div class="card-inner">
+        <div class="card-front">公寓 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '公寓', 'Apartment')"></i></div>
+        <div class="card-back">Apartment <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '公寓', 'Apartment')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="谁的" data-english="Whom">
+      <div class="card-inner">
+        <div class="card-front">谁的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '谁的', 'Whom')"></i></div>
+        <div class="card-back">Whom <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '谁的', 'Whom')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="煮饭" data-english="Cook meals">
+      <div class="card-inner">
+        <div class="card-front">煮饭 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '煮饭', 'Cook meals')"></i></div>
+        <div class="card-back">Cook meals <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '煮饭', 'Cook meals')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="地毯" data-english="Rug">
+      <div class="card-inner">
+        <div class="card-front">地毯 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '地毯', 'Rug')"></i></div>
+        <div class="card-back">Rug <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '地毯', 'Rug')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="水管工人" data-english="Plumber">
+      <div class="card-inner">
+        <div class="card-front">水管工人 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '水管工人', 'Plumber')"></i></div>
+        <div class="card-back">Plumber <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '水管工人', 'Plumber')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="门垫" data-english="Doormat">
+      <div class="card-inner">
+        <div class="card-front">门垫 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '门垫', 'Doormat')"></i></div>
+        <div class="card-back">Doormat <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '门垫', 'Doormat')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="裁缝师" data-english="Tailor">
+      <div class="card-inner">
+        <div class="card-front">裁缝师 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '裁缝师', 'Tailor')"></i></div>
+        <div class="card-back">Tailor <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '裁缝师', 'Tailor')"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22-28/7 -->
+  <section id="group-3" class="card-group group-3">
+    <h2 class="group-title">22-28/7</h2>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="家具" data-english="Furniture">
+      <div class="card-inner">
+        <div class="card-front">家具 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '家具', 'Furniture')"></i></div>
+        <div class="card-back">Furniture <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '家具', 'Furniture')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="烟囱" data-english="Chimney">
+      <div class="card-inner">
+        <div class="card-front">烟囱 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '烟囱', 'Chimney')"></i></div>
+        <div class="card-back">Chimney <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '烟囱', 'Chimney')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="文具" data-english="Stationery">
+      <div class="card-inner">
+        <div class="card-front">文具 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '文具', 'Stationery')"></i></div>
+        <div class="card-back">Stationery <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '文具', 'Stationery')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="凳子" data-english="Stool">
+      <div class="card-inner">
+        <div class="card-front">凳子 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '凳子', 'Stool')"></i></div>
+        <div class="card-back">Stool <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '凳子', 'Stool')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="车间 / 工坊" data-english="Workshop">
+      <div class="card-inner">
+        <div class="card-front">车间 / 工坊 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '车间 / 工坊', 'Workshop')"></i></div>
+        <div class="card-back">Workshop <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '车间 / 工坊', 'Workshop')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="计算器" data-english="Calculator">
+      <div class="card-inner">
+        <div class="card-front">计算器 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '计算器', 'Calculator')"></i></div>
+        <div class="card-back">Calculator <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '计算器', 'Calculator')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="螺丝刀" data-english="Screwdriver">
+      <div class="card-inner">
+        <div class="card-front">螺丝刀 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '螺丝刀', 'Screwdriver')"></i></div>
+        <div class="card-back">Screwdriver <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '螺丝刀', 'Screwdriver')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="舔" data-english="Licked">
+      <div class="card-inner">
+        <div class="card-front">舔 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '舔', 'Licked')"></i></div>
+        <div class="card-back">Licked <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '舔', 'Licked')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="修理" data-english="Repair">
+      <div class="card-inner">
+        <div class="card-front">修理 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '修理', 'Repair')"></i></div>
+        <div class="card-back">Repair <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '修理', 'Repair')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="毛" data-english="Fur">
+      <div class="card-inner">
+        <div class="card-front">毛 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '毛', 'Fur')"></i></div>
+        <div class="card-back">Fur <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '毛', 'Fur')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="地毯" data-english="Carpet">
+      <div class="card-inner">
+        <div class="card-front">地毯 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '地毯', 'Carpet')"></i></div>
+        <div class="card-back">Carpet <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '地毯', 'Carpet')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="手提电脑" data-english="Laptop">
+      <div class="card-inner">
+        <div class="card-front">手提电脑 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '手提电脑', 'Laptop')"></i></div>
+        <div class="card-back">Laptop <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '手提电脑', 'Laptop')"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1-7/8 -->
+  <section id="group-4" class="card-group group-4">
+    <h2 class="group-title">1-7/8</h2>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="这个" data-english="This">
+      <div class="card-inner">
+        <div class="card-front">这个 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '这个', 'This')"></i></div>
+        <div class="card-back">This <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '这个', 'This')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="螺丝拔手" data-english="Spanner">
+      <div class="card-inner">
+        <div class="card-front">螺丝拔手 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '螺丝拔手', 'Spanner')"></i></div>
+        <div class="card-back">Spanner <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '螺丝拔手', 'Spanner')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="那个" data-english="That">
+      <div class="card-inner">
+        <div class="card-front">那个 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '那个', 'That')"></i></div>
+        <div class="card-back">That <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '那个', 'That')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="木制的" data-english="Wooden">
+      <div class="card-inner">
+        <div class="card-front">木制的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '木制的', 'Wooden')"></i></div>
+        <div class="card-back">Wooden <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '木制的', 'Wooden')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="这些" data-english="These">
+      <div class="card-inner">
+        <div class="card-front">这些 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '这些', 'These')"></i></div>
+        <div class="card-back">These <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '这些', 'These')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="楼房" data-english="Storey house">
+      <div class="card-inner">
+        <div class="card-front">楼房 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '楼房', 'Storey house')"></i></div>
+        <div class="card-back">Storey house <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '楼房', 'Storey house')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="那些" data-english="Those">
+      <div class="card-inner">
+        <div class="card-front">那些 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '那些', 'Those')"></i></div>
+        <div class="card-back">Those <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '那些', 'Those')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="阳台" data-english="Balcony">
+      <div class="card-inner">
+        <div class="card-front">阳台 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '阳台', 'Balcony')"></i></div>
+        <div class="card-back">Balcony <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '阳台', 'Balcony')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="储藏柜" data-english="Cabinet">
+      <div class="card-inner">
+        <div class="card-front">储藏柜 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '储藏柜', 'Cabinet')"></i></div>
+        <div class="card-back">Cabinet <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '储藏柜', 'Cabinet')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="排屋" data-english="Townhouse">
+      <div class="card-inner">
+        <div class="card-front">排屋 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '排屋', 'Townhouse')"></i></div>
+        <div class="card-back">Townhouse <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '排屋', 'Townhouse')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="宽敞的" data-english="Spacious">
+      <div class="card-inner">
+        <div class="card-front">宽敞的 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '宽敞的', 'Spacious')"></i></div>
+        <div class="card-back">Spacious <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '宽敞的', 'Spacious')"></i></div>
+      </div>
+    </div>
+    <div class="card" onclick="handleCardClick(this)" data-chinese="除了" data-english="Except">
+      <div class="card-inner">
+        <div class="card-front">除了 <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '除了', 'Except')"></i></div>
+        <div class="card-back">Except <i class="fas fa-volume-up pronounce-icon" onclick="pronounceBoth(event, '除了', 'Except')"></i></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="pronounce-btn" onclick="pronounceCurrentCard()">
+  <i class="fas fa-volume-up"></i>
+</div>
+
+<script>
+// 当前选中的卡片
+let currentCard = null;
+
+// 切换卡片组显示
+function toggleGroup(groupId) {
+  // 隐藏所有卡片组
+  document.querySelectorAll('.card-group').forEach(group => {
+    group.style.display = 'none';
+  });
+  // 显示选中的卡片组
+  const group = document.getElementById(groupId);
+  group.style.display = 'block';
+  currentCard = null;
+}
+
+// 处理卡片点击事件
+function handleCardClick(cardElement) {
+  // 移除之前卡片的选中状态
+  if (currentCard) {
+    currentCard.classList.remove('selected');
+  }
+  
+  // 设置当前卡片
+  currentCard = cardElement;
+  currentCard.classList.add('selected');
+  
+  // 切换卡片翻转状态
+  currentCard.classList.toggle('flipped');
+  
+  // 自动发音
+  pronounceCurrentCard();
+}
+
+// 发音当前卡片
+function pronounceCurrentCard() {
+  if (!currentCard) {
+    alert("请先点击一张卡片");
+    return;
+  }
+
+  const chineseText = currentCard.getAttribute('data-chinese');
+  const englishText = currentCard.getAttribute('data-english');
+  
+  pronounceBoth(null, chineseText, englishText);
+}
+
+// 发音中英文
+function pronounceBoth(event, chineseText, englishText) {
+  // 阻止事件冒泡，避免触发卡片翻转
+  if (event) {
+    event.stopPropagation();
+  }
+
+  if (window.speechSynthesis) {
+    // 停止任何正在进行的语音
+    window.speechSynthesis.cancel();
+    
+    // 创建中文语音
+    const chineseUtterance = new SpeechSynthesisUtterance(chineseText);
+    chineseUtterance.lang = 'zh-CN';
+    chineseUtterance.rate = 0.9;
+    
+    // 创建英文语音
+    const englishUtterance = new SpeechSynthesisUtterance(englishText);
+    englishUtterance.lang = 'en-US';
+    englishUtterance.rate = 0.9;
+    
+    // 先读中文再读英文
+    window.speechSynthesis.speak(chineseUtterance);
+    
+    // 中文读完后再读英文
+    chineseUtterance.onend = function() {
+      window.speechSynthesis.speak(englishUtterance);
+    };
+  } else {
+    alert("您的浏览器不支持语音合成功能，请使用Chrome或Edge浏览器");
+  }
+}
+
+// 初始化显示第一组
+window.onload = function() {
+  document.getElementById('group-1').style.display = 'block';
+};
+</script>
+</body>
+</html>
